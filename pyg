@@ -1,0 +1,100 @@
+import pygame
+pygame.init()
+
+screen = pygame.display.set_mode((1300, 710))
+screen_width = 1300
+pygame.display.set_caption("Element Crash")
+
+
+class Player(object):
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.vel = 20
+        self.isJump = False
+        self.jumpCount = 10
+        self.left = False
+        self.right = False
+        self.walkCount = 0
+    
+    
+Player1 = Player(50, 400, 60, 200)
+Player2 = Player(1200, 400, 60, 200)
+
+run = True
+while run:
+    pygame.time.delay(100)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_a] and Player1.x > Player1.vel:
+        Player1.x -= Player1.vel
+        Player1.left = True
+        Player1.right = False
+    elif keys[pygame.K_d] and Player1.x < screen_width:
+        Player1.x += Player1.vel
+        Player1.right = True
+        Player1.left = False
+    else:
+        Player1.right = False
+        Player1.left = False
+        Player1.walkCount = 0
+
+    if keys[pygame.K_LEFT] and Player2.x > Player2.vel:
+        Player2.x -= Player2.vel
+        Player2.left = True
+        Player2.right = False
+    elif keys[pygame.K_RIGHT] and Player2.x < screen_width - Player2.width:
+        Player2.x += Player2.vel
+        Player2.right = True
+        Player2.left = False
+    else:
+        Player2.right = False
+        Player2.left = False
+        Player2.walkCount = 0
+
+    if not Player1.isJump:
+        if keys[pygame.K_w]:
+            Player1.isJump = True
+            Player1.right = False
+            Player1.left = False
+            Player1.walkCount = 0
+    else:
+        if Player1.jumpCount >= -10:
+            neg = 1
+            if Player1.jumpCount < 0:
+                neg = -1
+            Player1.y -= (Player1.jumpCount ** 2) * 0.5 * neg
+            Player1.jumpCount -= 1
+        else:
+            Player1.isJump = False
+            Player1.jumpCount = 10
+
+    if not Player2.isJump:
+        if keys[pygame.K_UP]:
+            Player2.isJump = True
+            Player2.right = False
+            Player2.left = False
+            Player2.walkCount = 0
+    else:
+        if Player2.jumpCount >= -10:
+            neg = 1
+            if Player2.jumpCount < 0:
+                neg = -1
+            Player2.y -= (Player2.jumpCount ** 2) * 0.5 * neg
+            Player2.jumpCount -= 1
+        else:
+            Player2.isJump = False
+            Player2.jumpCount = 10
+
+    screen.fill((0, 0, 0))
+    pygame.draw.rect(screen, (255, 255, 0), (Player1.x, Player1.y, Player1.width, Player1.height))
+    pygame.draw.rect(screen, (255, 255, 0), (Player2.x, Player2.y, Player2.width, Player2.height))
+    pygame.display.update()
+
+pygame.quit()
